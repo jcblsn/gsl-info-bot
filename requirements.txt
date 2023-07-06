@@ -1,2 +1,5 @@
 beautifulsoup4
 atprototools
+numpy
+pandas
+io
