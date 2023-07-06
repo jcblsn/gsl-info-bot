@@ -97,7 +97,7 @@ def main():
     update_csv(FILENAME, HEADERS, dt, water_level)
     caption = f"The current water level is {water_level} ft above mean sea level"
     caption += "\n\nwhich compared with"
-    caption += "\n\n1 year ago is {} ft {}\n2 years ago is {} ft {}\n10 years ago is {} ft {}".format(
+    caption += "\n\n1 year ago today is {} ft {}\n2 years ago today is {} ft {}\n10 years ago today is {} ft {}".format(
         # absolute value
         abs(comparison["1 year ago"]), get_emoji(comparison["1 year ago"]),
         abs(comparison["2 years ago"]), get_emoji(comparison["2 years ago"]),
