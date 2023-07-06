@@ -7,11 +7,16 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from atprototools import Session
 
-with open('credentials.json') as f:
-    creds = json.load(f)
 
-BSKY_USERNAME = os.environ.get('BSKY_USERNAME') or creds.get("BSKY_USERNAME")
-BSKY_PASSWORD = os.environ.get('BSKY_PASSWORD') or creds.get("BSKY_PASSWORD")
+if os.path.exists('credentials.json'):
+    with open('credentials.json') as f:
+        creds = json.load(f)
+    BSKY_USERNAME = creds.get("BSKY_USERNAME")
+    BSKY_PASSWORD = creds.get("BSKY_PASSWORD")
+else:
+    BSKY_USERNAME = os.environ.get('BSKY_USERNAME')
+    BSKY_PASSWORD = os.environ.get('BSKY_PASSWORD')
+    
 URL = "http://greatsalt.uslakes.info/Level.asp"
 FILENAME = "levels.csv"
 HEADERS = ['dt', 'water_level', 'timestamp_utc']
@@ -53,7 +58,7 @@ def main():
     caption += "\n"
     # caption += "Source: http://greatsalt.uslakes.info/Level.asp"
     caption += "\n"
-    caption += "A reminder: the Great Salt Lake is disappearing. Please consider getting involved to help save the lake: www.fogsl.org"
+    caption += "A reminder: the Great Salt Lake is disappearing. Please consider getting involved to help save the lake at www.fogsl.org"
     resp = session.postBloot(caption)
     if resp.status_code == 200:
         print("Post created successfully!")

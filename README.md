@@ -9,7 +9,7 @@ I scrape the current water level data from the [Great Salt Lake Water Level](htt
 
 ## Requirements
 
-- Required Python packages are listed in the `requirements.txt` file.
+Required Python packages are listed in the `requirements.txt` file.
 
 ## Attribution
 
