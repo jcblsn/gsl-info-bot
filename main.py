@@ -54,7 +54,7 @@ def main():
     session = Session(BSKY_USERNAME, BSKY_PASSWORD)
     water_level, dt = scrape_water_level_info(URL)
     update_csv(FILENAME, HEADERS, dt, water_level)
-    caption = f"Current water level of the Great Salt Lake: {water_level} feet MSL on {dt.strftime('%A, %B %d, %Y')} at {dt.strftime('%I:%M:%S %p')} MT."
+    caption = f"Current water level of the Great Salt Lake: {water_level} feet MSL as of {dt.strftime('%A, %B %d, %Y')} at {dt.strftime('%I:%M:%S %p')} MT."
     caption += "\n"
     # caption += "Source: http://greatsalt.uslakes.info/Level.asp"
     caption += "\n"
