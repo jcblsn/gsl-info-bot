@@ -7,7 +7,7 @@ The Great Salt Lake is [disappearing](https://www.reuters.com/business/environme
 
 ## Functionality
 
-I scrape the current water level data from the [Great Salt Lake Water Level](http://greatsalt.uslakes.info/Level.asp) website, log it to `levels.csv`, and post it to Bluesky using the [atprototools](https://github.com/iandklatzco/atprototools) package.
+I scrape the current water level data from the [Great Salt Lake Water Level](http://greatsalt.uslakes.info/Level.asp) website, log it to `levels.csv`, and post it to Bluesky using the [atprototools](https://github.com/iandklatzco/atprototools) package. The script runs once a day according to a Github Actions schedule.
 
 ## Requirements
 
