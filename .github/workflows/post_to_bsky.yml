@@ -3,7 +3,7 @@ name: Post to Bluesky
 on:
   schedule:
     # - cron: '0 0 * * *'
-    - cron: '*/2 * * * *' # tmp for testing
+    - cron: '*/5 * * * *' # tmp for testing
 
 jobs:
   build:
