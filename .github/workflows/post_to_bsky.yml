@@ -1,0 +1,30 @@
+name: Post to Bluesky
+
+on:
+  schedule:
+    # - cron: '0 0 * * *'
+    - cron: '*/2 * * * *' # tmp for testing
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install atprototools
+
+    - name: Post image to Bluesky
+      env:
+        BSKY_USERNAME: ${{ secrets.BSKY_USERNAME }}
+        BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
+      run: python main.py
