@@ -23,7 +23,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Post image to Bluesky
+    - name: Post update to Bluesky
       env:
         BSKY_USERNAME: ${{ secrets.BSKY_USERNAME }}
         BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}

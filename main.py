@@ -4,7 +4,15 @@ import requests, csv, os
 from datetime import datetime, timedelta
 import re
 
-session = Session(BSKY_USERNAME, BSKY_PASSWORD)
+
+import json
+with open('credentials.json') as f:
+    creds = json.load(f)
+USERNAME = creds["BSKY_USERNAME"]
+PASSWORD = creds["BSKY_PASSWORD"]
+session = Session(USERNAME, PASSWORD)
+
+session = Session(os.environ.get('BSKY_USERNAME'), os.environ.get('BSKY_PASSWORD'))
 
 url = "http://greatsalt.uslakes.info/Level.asp"
 response = requests.get(url)
@@ -50,13 +58,15 @@ for row in data:
 
 timestamp_utc = datetime.utcnow().strftime("%Y-%m-%d_%H%M%S")
 data.append([dt.strftime("%Y-%m-%d_%H%M%S"), water_level, timestamp_utc])
-with open(filename, "w", newline="") as file:
+with open(filename, "a", newline='') as file:
     writer = csv.writer(file)
     writer.writerows(data)
 
 caption = f"Current water level of the Great Salt Lake: {water_level} feet MSL on {date.strftime('%A, %B %d, %Y')} at {time.strftime('%I:%M:%S %p')} MT."
-caption += f"\n\nChange from yesterday: {day_change} feet.\n\nChange from last week: {week_change} feet.\n\nChange from last month: {month_change} feet."
-caption += f"\n\nSource: http://greatsalt.uslakes.info/Level.asp"
+# caption += f"\n\nChange from yesterday: {day_change} feet.\n\nChange from last week: {week_change} feet.\n\nChange from last month: {month_change} feet."
+# caption += f"\n\nSource: http://greatsalt.uslakes.info/Level.asp"
+caption += f"\n\nA reminder: the Great Salt Lake is disappearing. Please consider signing the petition to help save the lake: www.saveourgreatsaltlake.org"
+
 resp = session.postBloot(caption)
 
 if resp.status_code == 200:
