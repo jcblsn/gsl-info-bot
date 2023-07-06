@@ -16,7 +16,7 @@ if os.path.exists('credentials.json'):
 else:
     BSKY_USERNAME = os.environ.get('BSKY_USERNAME')
     BSKY_PASSWORD = os.environ.get('BSKY_PASSWORD')
-    
+
 URL = "http://greatsalt.uslakes.info/Level.asp"
 FILENAME = "levels.csv"
 HEADERS = ['dt', 'water_level', 'timestamp_utc']
@@ -58,7 +58,7 @@ def main():
     caption += "\n"
     # caption += "Source: http://greatsalt.uslakes.info/Level.asp"
     caption += "\n"
-    caption += "A reminder: the Great Salt Lake is disappearing. Please consider getting involved to help save the lake at www.fogsl.org"
+    caption += "A reminder: the Great Salt Lake is disappearing. Please consider getting involved with conservation efforts at www.fogsl.org"
     resp = session.postBloot(caption)
     if resp.status_code == 200:
         print("Post created successfully!")
