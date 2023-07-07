@@ -1,5 +1,4 @@
-beautifulsoup4
-atprototools
-numpy
-pandas
-io
+beautifulsoup4==4.12.2
+atprototools==0.0.17
+numpy==1.24.3
+pandas==1.5.3

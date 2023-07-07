@@ -10,8 +10,6 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from atprototools import Session
 
-# https://nwis.waterdata.usgs.gov/usa/nwis/uv/?cb_62614=on&format=rdb&site_no=10010100&legacy=1&period=&begin_date=2018-07-06&end_date=2023-07-06
-
 if os.path.exists('credentials.json'):
     with open('credentials.json') as f:
         creds = json.load(f)
@@ -98,7 +96,6 @@ def main():
     caption = f"The current water level is {water_level} ft above mean sea level"
     caption += "\n\nwhich compared with"
     caption += "\n\n1 year ago today is {} ft {}\n2 years ago today is {} ft {}\n10 years ago today is {} ft {}".format(
-        # absolute value
         abs(comparison["1 year ago"]), get_emoji(comparison["1 year ago"]),
         abs(comparison["2 years ago"]), get_emoji(comparison["2 years ago"]),
         abs(comparison["10 years ago"]), get_emoji(comparison["10 years ago"])
