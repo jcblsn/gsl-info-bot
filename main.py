@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import pytz
 from atprototools import Session
 
 if os.path.exists('credentials.json'):
@@ -19,49 +20,23 @@ else:
     BSKY_USERNAME = os.environ.get('BSKY_USERNAME')
     BSKY_PASSWORD = os.environ.get('BSKY_PASSWORD')
 
-URL = "http://greatsalt.uslakes.info/Level.asp"
-FILENAME = "levels.csv"
-HEADERS = ['dt', 'water_level', 'timestamp_utc']
-
-def scrape_water_level_info(url):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    water_level_info = soup.find('div', style=lambda value: 'font-size:46px' in value if value else False)
-    water_level = float(water_level_info.text.strip().replace(",", ""))
-    font_elements = soup.find_all('font')
-    date_info = next((el for el in font_elements if re.search(r"\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), \b", el.text)), None)
-    time_info = next((el for el in font_elements if re.search(r"\b(?:[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] [AP]M\b", el.text)), None)
-    date = datetime.strptime(date_info.text.strip(), "%A, %B %d, %Y") if date_info is not None else None
-    time = datetime.strptime(time_info.text.strip(), "%I:%M:%S %p") if time_info is not None else None
-    dt = datetime.combine(date, time.time())
-    return water_level, dt
-
-def update_csv(filename, headers, dt, water_level):
-    if not os.path.exists(filename) or os.stat(filename).st_size == 0:
-        with open(filename, 'w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(headers)
-    with open(filename, 'r') as file:
-        reader = csv.reader(file)
-        data = list(reader)
-        data = data[1:]
-    timestamp_utc = datetime.utcnow().strftime("%Y-%m-%d_%H%M%S")
-    data.append([dt.strftime("%Y-%m-%d_%H%M%S"), water_level, timestamp_utc])
+def get_data():
     
-    with open(filename, "a", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(data)
-
-def compare_with_previous_years(water_level, dt):
+    now_utc = datetime.utcnow().replace(tzinfo=pytz.utc)
+    now_mt = now_utc.astimezone(pytz.timezone('America/Denver'))
     
-    past_10_years_url = f"https://nwis.waterdata.usgs.gov/usa/nwis/uv/?cb_62614=on&format=rdb&site_no=10010100&legacy=1&period=&begin_date={dt.year - 10}-{dt.month:02d}-{dt.day:02d}&end_date={dt.year}-{dt.month:02d}-{dt.day:02d}"
+    past_10_years_url = f"https://nwis.waterdata.usgs.gov/usa/nwis/uv/?cb_62614=on&format=rdb&site_no=10010100&legacy=1&period=&begin_date={now_mt.year - 10}-{now_mt.month:02d}-{now_mt.day:02d}&end_date={now_mt.year}-{now_mt.month:02d}-{now_mt.day:02d}"
     
     history = pd.read_table(past_10_years_url, sep='\t',skiprows=28)
-    history = history.iloc[1:]
+    history = history[[i[5:10] == now_mt.strftime("%m-%d") for i in history['datetime']]]
     
     history['year'] = [i[:4] for i in history['datetime']]
     history['date_without_time'] = [i[:10] for i in history['datetime']]
     
+    dt = history.tail(1)['datetime'].to_numpy()[0]
+    dt = datetime.strptime(dt, "%Y-%m-%d %H:%M")
+    water_level = history.tail(1)['144241_62614'].to_numpy()[0]
+
     last_year = dt.year - 1
     two_years_ago = dt.year - 2
     ten_years_ago = dt.year - 10
@@ -78,7 +53,7 @@ def compare_with_previous_years(water_level, dt):
         "10 years ago": np.nan if np.isnan(water_level_10_years_ago) else (water_level - water_level_10_years_ago).round(2)
     }
     
-    return comparison
+    return dt, water_level, comparison
 
 def get_emoji(comparison):
     if comparison > 0:
@@ -90,9 +65,7 @@ def get_emoji(comparison):
 
 def main():
     session = Session(BSKY_USERNAME, BSKY_PASSWORD)
-    water_level, dt = scrape_water_level_info(URL)
-    comparison = compare_with_previous_years(water_level, dt)
-    update_csv(FILENAME, HEADERS, dt, water_level)
+    dt, water_level, comparison = get_data()
     caption = f"The current water level is {water_level} ft above mean sea level"
     caption += "\n\nwhich compared with"
     caption += "\n\n1 year ago today is {} ft {}\n2 years ago today is {} ft {}\n10 years ago today is {} ft {}".format(
@@ -101,7 +74,6 @@ def main():
         abs(comparison["10 years ago"]), get_emoji(comparison["10 years ago"])
     )
     caption += f"\n\nas of {dt.strftime('%A, %B %d, %Y')} at {dt.strftime('%I:%M:%S %p')} MT"
-    # caption += "\n\nA reminder: the Great Salt Lake is disappearing. Please consider getting involved with conservation efforts at www.fogsl.org"
     print(caption)
     resp = session.postBloot(caption)
     if resp.status_code == 200:
