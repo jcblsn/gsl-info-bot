@@ -7,7 +7,9 @@ The Great Salt Lake is [disappearing](https://www.reuters.com/business/environme
 
 ## Functionality
 
-I scrape the current water level data from the [Great Salt Lake Water Level](http://greatsalt.uslakes.info/Level.asp) website, log it to `levels.csv`, and post it to Bluesky using the [atprototools](https://github.com/iandklatzco/atprototools) package. I include comparisons to the average water level 1, 2, and 10 years ago calculated using [USGS historical data](https://nwis.waterdata.usgs.gov/usa/nwis/uv/).
+I retrieve the current water level data from NWIS data displayed [here](http://greatsalt.uslakes.info/Level.asp) and post it to Bluesky using the [atprototools](https://github.com/iandklatzco/atprototools) package. I include comparisons to the average water level 1, 2, and 10 years ago calculated using [historical data](https://nwis.waterdata.usgs.gov/usa/nwis/uv/).
+
+Water level is reported in feet above mean sea level ([NGVD 1929](https://en.wikipedia.org/wiki/National_Geodetic_Vertical_Datum_of_1929)) for [USGS site 10010100 near Saline, UT](https://waterdata.usgs.gov/nwis/inventory/?site_no=10010100&agency_cd=USGS), which is [located](https://goo.gl/maps/brzic2aqZmYKgfcc6) at the north arm of the lake. This value varies from values recorded at other sites, particularly those from the south arm of the lake. For example, this commonly used [web app](https://webapps.usgs.gov/gsl/) uses the value for water level taken from the south arm of the lake at [USGS site 10010000 near Saltair, UT](https://waterdata.usgs.gov/monitoring-location/10010000/).
 
 ## Requirements
 
