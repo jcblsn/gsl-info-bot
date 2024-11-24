@@ -1,3 +1,6 @@
 main_local.py
 main_cleaner.py
 credentials.json
+.venv/
+.env
+launch.json
